@@ -19,21 +19,35 @@ class PostController extends Controller
     /**
      * Display a listing of the resource.
      */
+    // public function index()
+    // {
+    //     $result = ['status' => 200];
+
+    //     try {
+    //         $result['data'] = $this->postService->getAll();
+    //     } catch (\Exception $e) {
+    //         $result = [
+    //             'status' => 500,
+    //             'error' => $e->getMessage(),
+    //         ];
+    //     }
+
+    //     return response()->json($result, $result['status']);
+    // }
+
     public function index()
     {
-        $result = ['status' => 200];
+        // try {
+            $posts = $this->postService->getAll();
 
-        try {
-            $result['data'] = $this->postService->getAll();
-        } catch (\Exception $e) {
-            $result = [
-                'status' => 500,
-                'error' => $e->getMessage(),
-            ];
-        }
+            return view('posts.index', ['posts' => $posts]);
+        // } catch (\Exception $e) {
+        //     $errorMessage = $e->getMessage();
 
-        return response()->json($result, $result['status']);
+        //     return view('error', ['errorMessage' => $errorMessage]);
+        // }
     }
+
 
     /**
      * Show the form for creating a new resource.
@@ -46,6 +60,27 @@ class PostController extends Controller
     /**
      * Store a newly created resource in storage.
      */
+    // public function store(Request $request)
+    // {
+    //     $data = $request->only([
+    //         'title',
+    //         'description',
+    //     ]);
+
+    //     $result = ['status' => 200];
+
+    //     try {
+    //         $result['data'] = $this->postService->savePostData($data);
+    //     } catch (\Exception $e) {
+    //         $result = [
+    //             'status' => 500,
+    //             'error' => $e->getMessage(),
+    //         ];
+    //     }
+
+    //     return response()->json($result, $result['status']);
+    // }
+
     public function store(Request $request)
     {
         $data = $request->only([
@@ -53,50 +88,71 @@ class PostController extends Controller
             'description',
         ]);
 
-        $result = ['status' => 200];
+        $this->postService->savePostData($data);
 
-        try {
-            $result['data'] = $this->postService->savePostData($data);
-        } catch (\Exception $e) {
-            $result = [
-                'status' => 500,
-                'error' => $e->getMessage(),
-            ];
-        }
-
-        return response()->json($result, $result['status']);
+        return redirect()->route('post.index')->with('success', 'Post berhasil disimpan');
     }
 
     /**
      * Display the specified resource.
      */
+    // public function show($id)
+    // {
+    //     $result = ['status' => 200];
+
+    //     try {
+    //         $result['data'] = $this->postService->getById($id);
+    //     } catch (\Exception $e) {
+    //         $result = [
+    //             'status' => 500,
+    //             'error' => $e->getMessage(),
+    //         ];
+    //     }
+
+    //     return response()->json($result, $result['status']);
+    // }
+
     public function show($id)
     {
-        $result = ['status' => 200];
+        $post = $this->postService->getById($id)->first();
 
-        try {
-            $result['data'] = $this->postService->getById($id);
-        } catch (\Exception $e) {
-            $result = [
-                'status' => 500,
-                'error' => $e->getMessage(),
-            ];
-        }
-
-        return response()->json($result, $result['status']);
+        return view('posts.detail', ['post' => $post]);
     }
 
     /**
      * Show the form for editing the specified resource.
      */
-    public function edit(Post $post)
+    public function edit($id)
     {
-        //
+        $post = $this->postService->getById($id)->first();
+
+        return view('posts.edit', ['post' => $post]);
     }
 
     /**
      * Update the specified resource in storage.
      */
+    // public function update(Request $request, $id)
+    // {
+    //     $data = $request->only([
+    //         'title',
+    //         'description',
+    //     ]);
+
+    //     $result = ['status' => 200];
+
+    //     try {
+    //         $result['data'] = $this->postService->updatePost($data, $id);
+    //     } catch (\Exception $e) {
+    //         $result = [
+    //             'status' => 500,
+    //             'error' => $e->getMessage(),
+    //         ];
+    //     }
+
+    //     return response()->json($result, $result['status']);
+    // }
+
     public function update(Request $request, $id)
     {
         $data = $request->only([
@@ -104,36 +160,34 @@ class PostController extends Controller
             'description',
         ]);
 
-        $result = ['status' => 200];
+        $this->postService->updatePost($data, $id);
 
-        try {
-            $result['data'] = $this->postService->updatePost($data, $id);
-        } catch (\Exception $e) {
-            $result = [
-                'status' => 500,
-                'error' => $e->getMessage(),
-            ];
-        }
-
-        return response()->json($result, $result['status']);
+        return redirect()->route('post.index')->with('success', 'Post berhasil diupdate');
     }
 
     /**
      * Remove the specified resource from storage.
      */
+    // public function destroy($id)
+    // {
+    //     $result = ['status' => 200];
+
+    //     try {
+    //         $result['data'] = $this->postService->deleteById($id);
+    //     }  catch (\Exception $e) {
+    //         $result = [
+    //             'status' => 500,
+    //             'error' => $e->getMessage(),
+    //         ];
+    //     }
+
+    //     return response()->json($result, $result['status']);
+    // }
+
     public function destroy($id)
     {
-        $result = ['status' => 200];
+        $this->postService->deleteById($id);
 
-        try {
-            $result['data'] = $this->postService->deleteById($id);
-        }  catch (\Exception $e) {
-            $result = [
-                'status' => 500,
-                'error' => $e->getMessage(),
-            ];
-        }
-
-        return response()->json($result, $result['status']);
+        return redirect()->route('post.index')->with('success', 'Post berhasil dihapus');
     }
 }
